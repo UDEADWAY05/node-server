@@ -19,8 +19,6 @@ async function addNote(title) {
     console.log(chalk.green("Note was added!"))
 }
 
-// addNote("Test")
-
 async function getNote() {
     const notes = await fs.readFile(notesPath, { encoding: "utf-8" })
     return Array.isArray(JSON.parse(notes)) ? JSON.parse(notes) : []
