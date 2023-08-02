@@ -3,7 +3,6 @@ const path = require("path")
 const chalk = require("chalk")
 
 const notesPath = path.join(__dirname, "db.json")
-console.log(notesPath)
 
 async function addNote(title) {
 
