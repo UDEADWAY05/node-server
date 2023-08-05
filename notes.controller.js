@@ -16,7 +16,7 @@ async function addNote(title) {
     notes.push(note)
 
     await fs.writeFile("./db.json", JSON.stringify(notes))
-    console.log(chalk.green("Note was added!"))
+    console.log(chalk.blue("Note was added!"))
 }
 
 async function getNote() {
@@ -32,6 +32,13 @@ async function printNotes() {
     });
 }
 
+async function editNote(newNote) {
+    const notes = await getNote()
+    notes.find((note) => note.id === newNote.id).title = newNote.title
+    await fs.writeFile("./db.json", JSON.stringify(notes))
+    console.log(chalk.green("Note was edited"))
+}
+
 async function removeNote(noteId) {
     const notes = await getNote()
     const filterNotes = []
@@ -43,5 +50,5 @@ async function removeNote(noteId) {
 }
 
 module.exports = {
-    addNote, printNotes, removeNote
+    addNote, removeNote, getNote, editNote, printNotes
 }

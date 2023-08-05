@@ -1,38 +1,59 @@
-const yargs = require("yargs");
-const pkg = require("./package.json")
-const { addNote, printNotes, removeNote } = require("./notes.controller")
 
-yargs.version(pkg.version)
+const chalk = require("chalk")
+const express = require("express")
+const path = require("path")
+const { addNote, getNote, removeNote, editNote } = require('./notes.controller') 
 
-yargs.command({
-    command: "list",
-    describe: "Print all notes",
-    async handler() {
-        printNotes()
-    }
+
+const port = 3000
+const app = express()
+
+app.set('view engine', 'ejs')
+app.set('views', 'pages')
+
+app.use(express.static(path.resolve(__dirname, 'public')))
+
+app.use(express.urlencoded({
+    extended: true
+}))
+
+app.use(express.json())
+
+app.get('/', async (req, res) => {
+    res.render('index', {
+        title: "Express App",
+        notes: await getNote(),
+        created: false
+    })
 })
 
-yargs.command({
-    command: "add",
-    describe: "Add new tone no list",
-    builder: {
-        title: {
-            type: "string",
-            describe: "Note title",
-            demandOption: true
-        }
-    },
-    handler({ title }) {
-        addNote(title)
-    }
+app.post('/', async (req, res) => {
+    await addNote(req.body.title)
+    res.render('index', {
+        title: "Express App",
+        notes: await getNote(),
+        created: true
+    })
 })
 
-yargs.command({
-    command: "remove",
-    describe: "Remove note by id",
-    async handler({ id }) {
-        removeNote(id)
-    }
+app.put('/:id/:title', async (req, res) => {
+    editNote(req.params)
+    res.render('index', {
+        title: "Express App",
+        notes: await getNote(),
+        created: false
+    })
 })
 
-yargs.parse()
+app.delete('/:id', async (req, res) => {
+    await removeNote(req.params.id)
+    res.render('index', {
+        title: "Express App",
+        notes: await getNote(),
+        created: false
+    })
+})
+
+app.listen(port, () => {
+    console.log(chalk.green(`Server has been started on port ${port}`))
+})
