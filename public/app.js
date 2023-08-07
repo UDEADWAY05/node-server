@@ -23,8 +23,14 @@ async function remove(id) {
 async function edit(id) {
     const newTitle = prompt("Введите новое название")
     if (newTitle !== null && newTitle !== undefined && newTitle.length > 0) {
-        await fetch(`/${id}/${newTitle}`, {
-            method: 'PUT'
+        await fetch(`/${id}`, {
+            method: 'PUT',
+            body:  JSON.stringify({
+                title: newTitle
+            }),
+            headers: {
+                'content-type': 'application/json'
+            }
         })
         return newTitle
     }

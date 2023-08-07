@@ -11,13 +11,15 @@ const app = express()
 app.set('view engine', 'ejs')
 app.set('views', 'pages')
 
+app.use(express.json())
+
 app.use(express.static(path.resolve(__dirname, 'public')))
 
 app.use(express.urlencoded({
     extended: true
 }))
 
-app.use(express.json())
+
 
 app.get('/', async (req, res) => {
     res.render('index', {
@@ -36,8 +38,8 @@ app.post('/', async (req, res) => {
     })
 })
 
-app.put('/:id/:title', async (req, res) => {
-    editNote(req.params)
+app.put('/:id', async (req, res) => {
+    editNote({ title: req.body.title, id: req.params.id })
     res.render('index', {
         title: "Express App",
         notes: await getNote(),
